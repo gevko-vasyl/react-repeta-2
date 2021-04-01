@@ -1,0 +1,2 @@
+(this["webpackJsonpreact-repeta-2"]=this["webpackJsonpreact-repeta-2"]||[]).push([[0],{9:function(e,t,r){"use strict";r.r(t);var c=r(1),n=r.n(c),a=r(3),s=r.n(a),p=r(0);var i=function(){return Object(p.jsx)("div",{className:"App"})};s.a.render(Object(p.jsx)(n.a.StrictMode,{children:Object(p.jsx)(i,{})}),document.getElementById("root"))}},[[9,1,2]]]);
+//# sourceMappingURL=main.5ee5226b.chunk.js.map
