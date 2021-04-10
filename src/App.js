@@ -7,7 +7,14 @@ import Container from './components/Container';
 import TodoList from './components/TodoList';
 import TodoEditor from './components/TodoEditor';
 import Filter from './components/Filter';
-import todosData from './todos.json';
+// import todosData from './todos.json';
+import Modal from './components/Modal';
+// import Clock from './components/Clock';
+// import Tabs from './components/Tabs';
+// import tabs from './tabs.json';
+
+import IconButton from './components/IconButton';
+import { ReactComponent as AddIcon } from './icons/add.svg';
 
 // import Form from './components/Form'
 
@@ -22,9 +29,26 @@ import todosData from './todos.json';
 
 class App extends Component {
   state = {
-    todos: todosData,
+    todos: [],
     filter: '',
+    showModal: false,
   };
+
+  componentDidMount() {
+    const data = JSON.parse(localStorage.getItem('todos'));
+    data && this.setState({ todos: data });
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const nextTodos = this.state.todos;
+    const prevTodos = prevState.todos;
+    if (nextTodos !== prevTodos) {
+      localStorage.setItem('todos', JSON.stringify(nextTodos));
+    }
+
+    if (nextTodos.length > prevTodos.length && prevTodos.length !== 0) {
+      this.toggleModal();
+    }
+  }
 
   addTodo = text => {
     const todo = {
@@ -46,16 +70,9 @@ class App extends Component {
     console.log(todoId);
 
     this.setState(prevState => ({
-      todos: prevState.todos.map(todo => {
-        if (todo.id === todoId) {
-          console.log('Got TODO!');
-          return {
-            ...todo,
-            completed: !todo.completed,
-          };
-        }
-        return todo;
-      }),
+      todos: prevState.todos.map(todo =>
+        todo.id === todoId ? { ...todo, completed: !todo.completed } : todo,
+      ),
     }));
   };
 
@@ -76,22 +93,13 @@ class App extends Component {
     return todos.reduce((acc, todo) => (todo.completed ? acc + 1 : acc), 0);
   };
 
-  // onSubmitChange = data => {
-  //   console.log(data)
-  // }
-
-  // handleNameChange = event => {
-  //   console.log(event.currentTarget.value);
-
-  //   this.setState({ name: event.currentTarget.value });
-  // };
-
-  // handleTagChange = event => {
-  //   this.setState({ tag: event.currentTarget.value });
-  // };
-
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+  };
   render() {
-    const { todos, filter } = this.state;
+    const { todos, filter, showModal } = this.state;
     const totalTodoCount = todos.length;
     const completedTodos = this.calculateCompletedTodos();
     const visibleTodos = this.getVisibleTodos();
@@ -99,18 +107,33 @@ class App extends Component {
     return (
       <div className="App">
         <Container>
+          {/* <Clock/> */}
+          {/* <Tabs items={tabs} /> */}
+
+          <IconButton onClick={this.toggleModal} aria-label="Add Todo">
+            <AddIcon width="40px" />
+          </IconButton>
+
           <div>
             <p>Total Count: {totalTodoCount}</p>
             <p>Completed: {completedTodos}</p>
           </div>
 
-          <TodoEditor onSubmit={this.addTodo} />
           <Filter value={filter} onChange={this.ChangeFilter} />
           <TodoList
             todos={visibleTodos}
             onDeleteTodo={this.deleteTodo}
             onToggleCompleted={this.toggleCompleted}
           />
+
+          {showModal && (
+            <Modal onClose={this.toggleModal}>
+              <button type="button" onClick={this.toggleModal}>
+                X
+              </button>
+              <TodoEditor onSubmit={this.addTodo} />
+            </Modal>
+          )}
         </Container>
         {/* <Form onSubmit={this.onSubmitChange} /> */}
       </div>

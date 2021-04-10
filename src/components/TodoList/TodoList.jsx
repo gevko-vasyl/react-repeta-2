@@ -1,25 +1,22 @@
 import classNames from 'classnames';
+import TodoItem from './TodoItem';
 import './TodoList.scss';
 
 const TodoList = ({ todos, onDeleteTodo, onToggleCompleted }) => (
   <ul className="TodoList">
-    {todos.map(todo => (
+    {todos.map(({ id, text, completed }) => (
       <li
-        key={todo.id}
+        key={id}
         className={classNames('TodoList__item', {
-          'TodoList__item--completed': todo.completed,
+          'TodoList__item--completed': completed,
         })}
       >
-        <input
-          type="checkbox"
-          className="TodoList__checkbox"
-          checked={todo.completed}
-          onChange={() => onToggleCompleted(todo.id)}
+        <TodoItem
+          text={text}
+          completed={completed}
+          onToggleCompleted={() => onToggleCompleted(id)}
+          onDelete={() => onDeleteTodo(id)}
         />
-        <p className="TodoList__text">{todo.text}</p>
-        <button className="TodoList__btn" onClick={() => onDeleteTodo(todo.id)}>
-          Remove
-        </button>
       </li>
     ))}
   </ul>
